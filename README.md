@@ -7,8 +7,6 @@ This notebook implements a content-based recommendation system for news articles
 
 1. Importing Required Libraries
 python
-Copy
-Edit
 import pandas as pd
 import numpy as np
 
@@ -40,10 +38,11 @@ nltk → Natural Language Toolkit for text processing.
 sklearn.feature_extraction.text → TF-IDF and CountVectorizer for text vectorization.
 sklearn.cluster.KMeans → For clustering similar articles.
 sklearn.metrics.pairwise.cosine_similarity → To measure similarity between articles.
+ 
+
 2. Loading the News Dataset
 python
-Copy
-Edit
+
 news_art = pd.read_json("/content/News_Category_Dataset_v3.json", lines=True)
 print(news_art.head())
 news_art.info()
@@ -52,17 +51,19 @@ Displays the first few rows and dataset info.
 Example Data Structure:
 headline	category	short_description	date
 "Tech Giants Battle Over AI"	"Technology"	"Google and Microsoft are competing in AI innovation."	2023-02-12
+
+
 3. Data Cleaning and Preprocessing
 python
-Copy
-Edit
+
 news_art = news_art[news_art['date'] >= pd.Timestamp(2018,1,1)]
 news_art.isna().sum()
 Filters only articles from 2018 and later.
 Checks for missing values.
+
+
 4. Text Preprocessing
-python
-Copy
+
 Edit
 stop_words = set(stopwords.words("english"))
 lemmatizer = WordNetLemmatizer()
@@ -83,10 +84,11 @@ Example Before and After Preprocessing:
 Headline	Processed Text
 "Apple Launches New iPhone!"	"apple launch new iphone"
 "Amazon Expands Cloud Services"	"amazon expand cloud service"
+
+
 5. Feature Extraction using TF-IDF
 python
-Copy
-Edit
+
 tfidf_vectorizer = TfidfVectorizer(max_features=5000)
 tfidf_matrix = tfidf_vectorizer.fit_transform(news_art["processed_text"])
 What TF-IDF Does:
@@ -97,10 +99,11 @@ Example of TF-IDF Transformation:
 Word	Apple	Launch	iPhone	Amazon	Expand
 Article 1	0.5	0.7	0.8	0.0	0.0
 Article 2	0.0	0.0	0.0	0.6	0.7
+
+
 6. Clustering Similar News Articles with K-Means
 python
-Copy
-Edit
+
 kmeans = KMeans(n_clusters=10, random_state=42)
 news_art["cluster"] = kmeans.fit_predict(tfidf_matrix)
 How K-Means Works:
@@ -112,10 +115,11 @@ Headline	Cluster
 "Apple Unveils New MacBook"	3
 "Google AI Outperforms Humans"	1
 "NASA Discovers New Planet"	5
+
+
 7. Finding Similar Articles using Cosine Similarity
 python
-Copy
-Edit
+
 cosine_sim = cosine_similarity(tfidf_matrix)
 
 def get_similar_articles(index, top_n=5):
@@ -131,10 +135,11 @@ If a user reads "Tesla Unveils New Electric Car", the system might recommend:
 "Ford Plans to Go Fully Electric by 2030"
 "GM Introduces New EV Battery Technology"
 "How EVs are Changing the Auto Industry"
+
+
 8. Testing the Recommendation System
 python
-Copy
-Edit
+
 index = 10  # Example article index
 print("Original Article:", news_art.iloc[index]["headline"])
 print("Recommended Articles:", get_similar_articles(index, top_n=3))
